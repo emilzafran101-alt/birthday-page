@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday 🎉</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(270deg, #ff0080, #7928ca, #00c6ff, #00ff99);
+  background-size: 800% 800%;
+  animation: bg 12s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: monospace;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+@keyframes bg {
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
+}
+
+#box {
+  background: rgba(0,0,0,0.7);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  color: #00ffcc;
+  font-size: 26px;
+  box-shadow: 0 0 30px rgba(255,255,255,0.3);
+}
+
+#cursor {
+  display: inline-block;
+  width: 10px;
+  background: #00ffcc;
+  margin-left: 5px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,50%,100% {opacity:1;}
+  25%,75% {opacity:0;}
+}
+
+#tap {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #ffccff;
+}
+
+.final {
+  font-size: 32px;
+  font-weight: bold;
+  animation: rainbow 3s linear infinite;
+}
+
+@keyframes rainbow {
+  0% {color:#ff0080;}
+  25% {color:#00ffcc;}
+  50% {color:#ffff00;}
+  75% {color:#00ff99;}
+  100% {color:#ff0080;}
+}
+
+.heart {
+  position: absolute;
+  font-size: 24px;
+  animation: float 6s linear infinite;
+}
+
+@keyframes float {
+  0% {transform: translateY(100vh); opacity:0;}
+  20% {opacity:1;}
+  100% {transform: translateY(-10vh); opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- Background music -->
+<audio id="bgMusic" loop>
+  <source src="John Mayer - New Light (Official Audio) (320 KBps).mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<div id="box">
+  <div id="text"></div><span id="cursor"></span>
+  <div id="tap">Tap anywhere to continue 🎵💖</div>
+</div>
+
+<script>
+// Messages to display
+const messages = [
+  "System Initialized",
+  "Loading birthday module",
+  "Installation successful",
+  "Happy Birthday Sayang 🎉\n\nFrom Emil ❤️"
+];
+
+let page = 0;
+let charIndex = 0;
+let typing = false;
+let musicStarted = false;
+
+// Typewriter function
+function typeMessage() {
+  typing = true;
+  const current = messages[page];
+
+  // Hide "Tap" on last page
+  if (page === messages.length - 1) {
+    document.getElementById("tap").style.display = "none";
+  } else {
+    document.getElementById("tap").style.display = "block";
+  }
+
+  if (charIndex < current.length) {
+    let char = current.charAt(charIndex);
+
+    if (char === "\n") {
+      document.getElementById("text").innerHTML += "<br>";
+    } else {
+      document.getElementById("text").innerHTML += char;
+    }
+
+    charIndex++;
+    setTimeout(typeMessage, 70);
+  } else {
+    typing = false;
+    if (page === messages.length - 1) {
+      document.getElementById("text").classList.add("final");
+      spawnHearts();
+    }
+  }
+}
+
+// Start typing
+typeMessage();
+
+// Click anywhere to go next message & start music
+document.body.addEventListener("click", () => {
+  // Start music on first click (iOS Safari compatible)
+  if (!musicStarted) {
+    const music = document.getElementById("bgMusic");
+    music.play().catch(()=>{}); // catch promise rejection
+    musicStarted = true;
+  }
+
+  if (typing) return;
+
+  page++;
+  if (page < messages.length) {
+    document.getElementById("text").innerHTML = "";
+    document.getElementById("text").className = "";
+    charIndex = 0;
+    typeMessage();
+  }
+});
+
+// Function to spawn floating hearts
+function spawnHearts() {
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (4 + Math.random() * 3) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+  }, 500);
+}
+</script>
+
+</body>
+</html>
